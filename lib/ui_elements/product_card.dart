@@ -158,7 +158,7 @@ class _ProductCardState extends State<ProductCard> {
                             style: const TextStyle(
                               decoration: TextDecoration.lineThrough,
                               color: MyTheme.medium_grey,
-                              fontSize: 12,
+                              fontSize: 10,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -166,7 +166,7 @@ class _ProductCardState extends State<ProductCard> {
                       else
                         const SizedBox(height: 8.0),
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                         child: Text(
                           SystemConfig.systemCurrency != null
                               ? widget.main_price?.replaceAll(
@@ -179,7 +179,7 @@ class _ProductCardState extends State<ProductCard> {
                           maxLines: 1,
                           style: TextStyle(
                             color: Theme.of(context).primaryColor,
-                            fontSize: 16,
+                            fontSize: 13,
                             fontWeight: FontWeight.w700,
                           ),
                         ),

@@ -277,15 +277,38 @@ class _MiniProductCardState extends State<MiniProductCard> {
                     widget.name!,
                     overflow: TextOverflow.ellipsis,
                     textDirection: widget.name!.direction,
-                    maxLines: 2,
+                    maxLines: 3,
                     style: widget.nameTextStyle ??
                         const TextStyle(
                             color: MyTheme.font_grey_Light,
                             fontSize: 12,
-                            height: 1.2,
+                            height: 1,
                             fontWeight: FontWeight.w400),
                   ),
                 ),
+              ),
+              if(widget.has_discount!)
+              Flexible(
+                child: Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                          child: Text(
+                            SystemConfig.systemCurrency != null
+                                ? widget.stroked_price?.replaceAll(
+                                        SystemConfig.systemCurrency!.code!,
+                                        SystemConfig.systemCurrency!.symbol!) ??
+                                    ''
+                                : widget.stroked_price ?? '',
+                            textAlign: TextAlign.left,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: const TextStyle(
+                              decoration: TextDecoration.lineThrough,
+                              color: MyTheme.medium_grey,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        )
               ),
               Flexible(
                 child: Padding(
