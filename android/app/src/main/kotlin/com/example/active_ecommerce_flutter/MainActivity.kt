@@ -1,4 +1,4 @@
-package com.devefinancestore
+package com.elgharep
 
 import android.content.ContentValues
 import android.net.Uri
