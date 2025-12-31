@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:active_ecommerce_cms_demo_app/screens/brand_products.dart';
 import 'package:active_ecommerce_cms_demo_app/custom/box_decorations.dart';
 
+import '../app_config.dart';
+
 class BrandSquareCard extends StatefulWidget {
   final int? id;
   final String slug;
@@ -45,6 +47,7 @@ class _BrandSquareCardState extends State<BrandSquareCard> {
                   ),
                 ),
               ),
+              if (AppConfig.businessSettingsData.showBrandName == true)
               SizedBox(
                 height: 40,
                 child: Padding(

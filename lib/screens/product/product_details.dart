@@ -2414,52 +2414,46 @@ class _ProductDetailsState extends State<ProductDetails>
   Row buildMainPriceRow() {
     return Row(
       children: [
-        AnimatedNumberText<double>(
-          _basePrice,
-          duration: const Duration(
-              milliseconds: AppDimensions.animationDefaultInMillis),
-          style: TextStyle(
-            color: Theme.of(context).primaryColor,
-            fontFamily: 'Public Sans',
-            fontSize: 16.0,
-            fontWeight: FontWeight.bold,
-          ),
-          formatter: (value) {
-            return '${value.toStringAsFixed(2)} ${SystemConfig.systemCurrency?.symbol ?? ''}'
-                .trim();
-          },
-        ),
-        Visibility(
-          visible: _productDetails!.has_discount!,
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: AppDimensions.paddingSmall),
-            child: Text(
-                SystemConfig.systemCurrency != null
-                    ? _productDetails!.stroked_price!.replaceAll(
-                        SystemConfig.systemCurrency!.code!,
-                        SystemConfig.systemCurrency!.symbol!)
-                    : _productDetails!.stroked_price!,
-                style: const TextStyle(
-                  decoration: TextDecoration.lineThrough,
-                  color: Color(0xffA8AFB3),
-                  fontFamily: 'Public Sans',
-                  fontSize: 12.0,
-                  fontWeight: FontWeight.normal,
-                )),
-          ),
-        ),
-        Visibility(
-          visible: _productDetails!.has_discount!,
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: AppDimensions.paddingSmall),
-            child: Text(
-              "${_productDetails!.discount}",
-              style: const TextStyle(
-                  fontSize: 12, color: Colors.red, fontWeight: FontWeight.bold),
+        Column(
+          children: [
+            Visibility(
+              visible: _productDetails!.has_discount!,
+              child: Padding(
+                padding:
+                    const EdgeInsets.only(bottom: AppDimensions.paddingSmall),
+                child: Text(
+                    SystemConfig.systemCurrency != null
+                        ? _productDetails!.stroked_price!.replaceAll(
+                            SystemConfig.systemCurrency!.code!,
+                            SystemConfig.systemCurrency!.symbol!)
+                        : _productDetails!.stroked_price!,
+                    style: const TextStyle(
+                      decoration: TextDecoration.lineThrough,
+                      color: Color(0xffA8AFB3),
+                      fontFamily: 'Public Sans',
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.normal,
+                    )),
+              ),
             ),
-          ),
-        ),
-        Text(
+            Row(
+              children: [
+                AnimatedNumberText<double>(
+                  _basePrice,
+                  duration: const Duration(
+                      milliseconds: AppDimensions.animationDefaultInMillis),
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    fontFamily: 'Public Sans',
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  formatter: (value) {
+                    return '${value.toStringAsFixed(2)} ${SystemConfig.systemCurrency?.symbol ?? ''}'
+                        .trim();
+                  },
+                ),
+                Text(
           "/${_productDetails!.unit}",
           // _singlePriceString,
           style: TextStyle(
@@ -2467,6 +2461,91 @@ class _ProductDetailsState extends State<ProductDetails>
               fontSize: 16.0,
               fontWeight: FontWeight.w600),
         ),
+              ],
+            ),
+          ],
+        ),
+        
+        const Spacer(),
+        if (_productDetails?.has_discount == true)
+          Container(
+            height: 70,
+            width: 70,
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor,
+              shape: BoxShape.circle,
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x14000000),
+                  offset: Offset(-1, 1),
+                  blurRadius: 1,
+                ),
+              ],
+            ),
+            alignment: Alignment.center,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 6),
+                child: Column(
+                  children: [
+                    Text(
+                      'off'.tr(context: context),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        height: 1.1,
+                      ),
+                    ),
+                    if (AppConfig.businessSettingsData.diplayDiscountType ==
+                        'flat' && _productDetails?.flatdiscount != null)
+                      Column(
+                        children: [
+                          Text(
+                            "${_productDetails?.flatdiscount}",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              height: 1.1,
+                            ),
+                          ),
+                          Text(
+                            "${SystemConfig.systemCurrency!.symbol}",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              height: 1.1,
+                            ),
+                          ),
+                        ],
+                      ),
+                    if (AppConfig.businessSettingsData.diplayDiscountType ==
+                        'percentage'|| _productDetails?.flatdiscount == null)
+                      Text(
+                        "${_productDetails?.discount}",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          height: 1.1,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
       ],
     );
   }
@@ -2740,27 +2819,44 @@ class _ProductDetailsState extends State<ProductDetails>
   }
 
   int errorsTimes = 0;
-
+  int _heightTries = 0;
+  bool _heightInProgress = false;
   Future<void> getDescriptionHeight() async {
-    if (errorsTimes > 3) return;
+    if (!mounted) return;
+    if (_heightInProgress) return;
 
-    errorsTimes++;
+    _heightInProgress = true;
+
     try {
-      final String value = (await controller.runJavaScriptReturningResult(
-        "document.getElementById('scaled-frame').clientHeight",
-      ))
-          .toString();
-      if (value.trim() == 'null' && webViewHeight == null) {
-        throw "value (webViewHeight) is null";
-      }
-      webViewHeight = double.tryParse(value.toString());
-      errorsTimes = 0;
+      while (mounted && _heightTries < 6) {
+        _heightTries++;
 
-      setState(() {});
+        // سيب وقت للـ webview يرندر
+        await Future.delayed(const Duration(milliseconds: 150));
+
+        final res = await controller.runJavaScriptReturningResult(
+          "document.getElementById('scaled-frame')?.clientHeight ?? 0",
+        );
+
+        // الresult بيرجع كـ num أو String حسب المنصة
+        final double h = () {
+          if (res is num) return res.toDouble();
+          final s = res.toString().replaceAll('"', '').trim();
+          return double.tryParse(s) ?? 0;
+        }();
+
+        if (h > 0) {
+          webViewHeight = h;
+          _heightTries = 0;
+          if (mounted) setState(() {});
+          break;
+        }
+      }
     } catch (e, st) {
       recordError(e, st);
-      print("Error in runJavaScriptReturningResult : $e - times $errorsTimes");
-      return await getDescriptionHeight();
+      // ماتعملش recursion
+    } finally {
+      _heightInProgress = false;
     }
   }
 
@@ -2795,13 +2891,15 @@ class _ProductDetailsState extends State<ProductDetails>
         shrinkWrap: true,
         itemBuilder: (context, index) {
           return TopSellingProductsCard(
-              id: _topProducts[index].id,
-              slug: _topProducts[index].slug,
-              image: _topProducts[index].thumbnail_image,
-              name: _topProducts[index].name,
-              main_price: _topProducts[index].main_price,
-              stroked_price: _topProducts[index].stroked_price,
-              has_discount: _topProducts[index].has_discount);
+            id: _topProducts[index].id,
+            slug: _topProducts[index].slug,
+            image: _topProducts[index].thumbnail_image,
+            name: _topProducts[index].name,
+            main_price: _topProducts[index].main_price,
+            stroked_price: _topProducts[index].stroked_price,
+            has_discount: _topProducts[index].has_discount,
+            flatdiscount: _topProducts[index].flatdiscount,
+          );
         },
       );
     } else {
@@ -2840,14 +2938,16 @@ class _ProductDetailsState extends State<ProductDetails>
             scrollDirection: Axis.horizontal,
             itemBuilder: (context, index) {
               return MiniProductCard(
-                  id: _relatedProducts[index].id,
-                  slug: _relatedProducts[index].slug,
-                  image: _relatedProducts[index].thumbnail_image,
-                  name: _relatedProducts[index].name,
-                  main_price: _relatedProducts[index].main_price,
-                  stroked_price: _relatedProducts[index].stroked_price,
-                  isWholesale: _relatedProducts[index].isWholesale,
-                  has_discount: _relatedProducts[index].has_discount);
+                id: _relatedProducts[index].id,
+                slug: _relatedProducts[index].slug,
+                image: _relatedProducts[index].thumbnail_image,
+                name: _relatedProducts[index].name,
+                main_price: _relatedProducts[index].main_price,
+                stroked_price: _relatedProducts[index].stroked_price,
+                isWholesale: _relatedProducts[index].isWholesale,
+                has_discount: _relatedProducts[index].has_discount,
+                flatdiscount: _relatedProducts[index].flatdiscount,
+              );
             },
           ),
         ),

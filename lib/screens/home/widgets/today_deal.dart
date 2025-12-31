@@ -9,6 +9,7 @@ import '../../../custom/home_banners/home_banners_list.dart' show HomeBannersLis
 import '../../../data_model/product_mini_response.dart';
 import '../../../data_model/slider_response.dart';
 import '../../../locale/custom_localization.dart';
+import '../../../my_theme.dart';
 import '../../product/product_details.dart';
 import 'today_deal_all.dart';
 
@@ -72,7 +73,8 @@ class TodaysDealProductsSliverWidget extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => TodaysDealViewAllScreen(),
+                            builder: (_) => TodaysDealViewAllScreen(
+                            ),
                           ),
                         );
                         
@@ -142,7 +144,8 @@ class TodaysDealProductsSliverWidget extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           product.main_price ?? '',
-                          style: const TextStyle(color: Colors.red),
+                          style:  TextStyle(color: MyTheme.secondaryColor,
+                            fontWeight: FontWeight.w700,),
                         ),
                       ],
                     ),

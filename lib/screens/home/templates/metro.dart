@@ -7,6 +7,7 @@ import 'package:active_ecommerce_cms_demo_app/screens/home/widgets/brand_list.da
 import 'package:active_ecommerce_cms_demo_app/screens/home/widgets/today_deal.dart';
 import 'package:flutter/material.dart';
 import '../../../custom/featured_category/enum_feature_category.dart';
+import '../../../custom/home_banners/home_banner_five.dart';
 import '../../../custom/home_banners/home_banners_four.dart';
 import '../../../custom/home_banners/home_banners_one.dart';
 import '../../../custom/home_banners/home_banners_two.dart';
@@ -39,6 +40,7 @@ class MetroScreen extends StatelessWidget {
         const SliverToBoxAdapter(child: HomeBannersFour()),
         const FeaturedProductsListSliver(),
         const AuctionProductsSectionSliver(),
+        const SliverToBoxAdapter(child: HomeBannersFive()),
 
         ...allProductsSliver,
       ],

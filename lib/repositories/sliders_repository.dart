@@ -91,6 +91,17 @@ class SlidersRepository {
     print('BANNER FOUR RESPONSE => ${response.body}');
     return sliderResponseFromJson(response.body);
   }
+      Future<SliderResponse> getBannerFiveImages() async {
+    const String url = ("${AppConfig.BASE_URL}/banners-five");
+    final response = await ApiRequest.get(
+      url: url,
+      headers: {
+        "App-Language": app_language.$!,
+      },
+    );
+    print('BANNER five RESPONSE => ${response.body}');
+    return sliderResponseFromJson(response.body);
+  }
 
   Future<List<FlashDealResponseDatum>> fetchBanners() async {
     const String url = ("${AppConfig.BASE_URL}/flash-deals");

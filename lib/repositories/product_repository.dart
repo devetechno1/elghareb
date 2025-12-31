@@ -11,6 +11,7 @@ import 'package:active_ecommerce_cms_demo_app/helpers/system_config.dart';
 import 'package:active_ecommerce_cms_demo_app/locale/custom_localization.dart';
 import 'package:active_ecommerce_cms_demo_app/repositories/api-request.dart';
 import 'package:active_ecommerce_cms_demo_app/data_model/wholesale_model.dart';
+import 'package:flutter/rendering.dart';
 
 import '../data_model/variant_price_response.dart';
 
@@ -29,8 +30,8 @@ class ProductRepository {
     return catResponseFromJson(response.body);
   }
 
-  Future<ProductMiniResponse> getFeaturedProducts({page = 1}) async {
-    final String url = ("${AppConfig.BASE_URL}/products/featured?page=$page");
+  Future<ProductMiniResponse> getFeaturedProducts({page = 1,  paginate}) async {
+    final String url = ("${AppConfig.BASE_URL}/products/featured?page=$page&paginate=$paginate");
     final response = await ApiRequest.get(url: url, headers: {
       "App-Language": app_language.$!,
     });
@@ -38,8 +39,8 @@ class ProductRepository {
     return productMiniResponseFromJson(response.body);
   }
 
-  Future<ProductMiniResponse> getBestSellingProducts() async {
-    const String url = ("${AppConfig.BASE_URL}/products/best-seller");
+  Future<ProductMiniResponse> getBestSellingProducts({page = 1,int? paginate}) async {
+    final String url = ("${AppConfig.BASE_URL}/products/best-seller?page=$page&paginate=$paginate");
     final response = await ApiRequest.get(url: url, headers: {
       "App-Language": app_language.$!,
       "Currency-Code": SystemConfig.systemCurrency?.code ?? "",
@@ -49,8 +50,8 @@ class ProductRepository {
     print("bestselling: ${response.body}");
     return productMiniResponseFromJson(response.body);
   }
-    Future<ProductMiniResponse> getDiscountProducts() async {
-    const String url = ("${AppConfig.BASE_URL}/products/discounted");
+    Future<ProductMiniResponse> getDiscountProducts({ page = 1 , paginate}) async {
+    final String url = ("${AppConfig.BASE_URL}/products/discounted?page=$page&paginate=$paginate");
     final response = await ApiRequest.get(url: url, headers: {
       "App-Language": app_language.$!,
       "Currency-Code": SystemConfig.systemCurrency?.code ?? "",
@@ -69,9 +70,8 @@ class ProductRepository {
     });
     return productMiniResponseFromJson(response.body);
   }
-
-  Future<ProductMiniResponse> getTodaysDealProducts() async {
-    const String url = ("${AppConfig.BASE_URL}/products/todays-deal");
+  Future<ProductMiniResponse> getTodaysDealProducts({page=1,paginate}) async {
+    final String url = ("${AppConfig.BASE_URL}/products/todays-deal?page=$page&paginate=$paginate");
     final response = await ApiRequest.get(url: url, headers: {
       "App-Language": app_language.$!,
     });
@@ -129,7 +129,8 @@ class ProductRepository {
       brands = "",
       categories = "",
       min = "",
-      max = ""}) async {
+      max = "",
+      flatdiscount = ""}) async {
     final String url = ("${AppConfig.BASE_URL}/products/search" +
         "?page=$page&name=$name&sort_key=$sort_key&brands=$brands&categories=$categories&min=$min&max=$max");
 
@@ -137,6 +138,8 @@ class ProductRepository {
       "App-Language": app_language.$!,
     });
     log("reeeees ${response.body}");
+                 final body = response.body;
+debugPrint('has flat_discount key? ${body.contains('"flat_discount"')}');  
     return productMiniResponseFromJson(response.body);
     
   }
@@ -173,7 +176,9 @@ class ProductRepository {
       throw jsonDecode(response.body)["message"]?.toString() ??
           "some_things_went_wrong".tr();
     }
-
+         print("product details: ${response.body}"); 
+         final body = response.body;
+debugPrint('has flat_discount key? ${body.contains('"flat_discount"')}');           
     return productDetailsResponseFromJson(response.body);
   }
 

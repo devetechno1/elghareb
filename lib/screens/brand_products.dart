@@ -161,7 +161,7 @@ class _BrandProductsState extends State<BrandProducts> {
       layout: PagedLayout.masonry,
       mainAxisSpacing: 14,
       crossAxisSpacing: 14,
-       responsiveGrid: false,
+      responsiveGrid: false,
       gridCrossAxisCount: 3,
       padding: const EdgeInsets.only(
         top: AppDimensions.paddingDefault,
@@ -181,6 +181,7 @@ class _BrandProductsState extends State<BrandProducts> {
           discount: product.discount,
           isWholesale: product.isWholesale,
           searchedText: _searchKey,
+          flatdiscount: product.flatdiscount,
         );
       },
     );

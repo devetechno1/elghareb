@@ -12,20 +12,24 @@ import 'package:active_ecommerce_cms_demo_app/locale/custom_localization.dart';
 import '../../custom/paged_view/models/page_result.dart';
 import '../../custom/paged_view/paged_view.dart';
 
-class TopSellingProducts extends StatefulWidget {
+class NewProducts extends StatefulWidget {
   @override
-  _TopSellingProductsState createState() => _TopSellingProductsState();
+  _NewProductsState createState() => _NewProductsState();
 }
 
-class _TopSellingProductsState extends State<TopSellingProducts> {
+class _NewProductsState extends State<NewProducts> {
+  Future<PageResult<Product>> _fetchProducts(int page) async {
+    try {
+      final ProductMiniResponse res =
+          await ProductRepository().getFeaturedProducts();
+      if (res.success != true) throw "Not Success";
+      final List<Product> list = res.products ?? [];
+      return PageResult<Product>(data: list, hasMore: false);
+    } catch (_) {
+      return const PageResult<Product>(data: [], hasMore: false);
+    }
+  }
 
-Future<PageResult<Product>> _fetchProducts(int page) async {
-  final res = await ProductRepository().getBestSellingProducts(page: page);
-  if (res.success != true) throw "Not Success";
-  final list = res.products ?? [];
-  final hasMore = list.isNotEmpty; 
-  return PageResult<Product>(data: list, hasMore: hasMore);
-}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,7 +83,7 @@ Future<PageResult<Product>> _fetchProducts(int page) async {
         ),
       ),
       title: Text(
-        'top_selling_products_ucf'.tr(context: context),
+        'new_products'.tr(context: context),
         style: const TextStyle(
             fontSize: 16,
             color: MyTheme.dark_font_grey,

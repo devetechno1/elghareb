@@ -64,6 +64,7 @@ class HomeProvider extends ChangeNotifier {
   List<AIZSlider> bannerTwoImageList = [];
   List<AIZSlider> bannerThreeImageList = [];
   List<AIZSlider> bannerFourImageList = [];
+  List<AIZSlider> bannerFiveImageList = [];
   List<AIZSlider> flashDealBannerImageList = [];
   List<AIZSlider> todayDealBannerImageList = [];
   List<FlashDealResponseDatum> _banners = [];
@@ -86,6 +87,7 @@ class HomeProvider extends ChangeNotifier {
   bool isBannerTwoInitial = true;
   bool isBannerThreeInitial = true;
   bool isBannerFourInitial = true;
+  bool isBannerFiveInitial = true;
   bool isFlashDealInitial = true;
   bool isBannerFlashDeal = true;
   bool isBrandsInitial = true;
@@ -151,6 +153,7 @@ class HomeProvider extends ChangeNotifier {
       fetchTodayDealBannerImages(),
       fetchDiscountProducts(),
       fetchBannerFourImags(),
+      fetchBannerFiveImags(),
 
       Provider.of<CartProvider>(context, listen: false).fetchData(context),
     ]);
@@ -171,7 +174,7 @@ class HomeProvider extends ChangeNotifier {
   Future<void> fetchTodayDealData() async {
     productMini.ProductMiniResponse? deal;
     await executeAndHandleErrors(
-        () async => deal = await ProductRepository().getTodaysDealProducts());
+        () async => deal = await ProductRepository().getTodaysDealProducts(paginate: ""));
 
     // print(deal.products!.length);
     // if (deal.success! && deal.products!.isNotEmpty) {
@@ -357,7 +360,7 @@ class HomeProvider extends ChangeNotifier {
     showBestSellingLoadingContainer = true;
     productMini.ProductMiniResponse? bestselling;
     await executeAndHandleErrors(() async =>
-        bestselling = await ProductRepository().getBestSellingProducts());
+        bestselling = await ProductRepository().getBestSellingProducts(paginate: 10));
     bestSellingProductList.clear();
     bestSellingProductList.addAll(bestselling?.products ?? []);
     showBestSellingLoadingContainer = false;
@@ -365,13 +368,14 @@ class HomeProvider extends ChangeNotifier {
 
     notifyListeners();
   }
+
    Future<void> fetchDiscountProducts() async {
     if (showDiscountedLoadingContainer) return;
 
     showDiscountedLoadingContainer = true;
     productMini.ProductMiniResponse? discountproducts;
     await executeAndHandleErrors(() async =>
-        discountproducts = await ProductRepository().getDiscountProducts());
+        discountproducts = await ProductRepository().getDiscountProducts(paginate: 10));
     discountedProductList.clear();
     discountedProductList.addAll(discountproducts?.products ?? []);
     showDiscountedLoadingContainer = false;
@@ -415,7 +419,7 @@ class HomeProvider extends ChangeNotifier {
   Future<void> fetchTodayDealProducts() async {
     productMini.ProductMiniResponse? deals;
     await executeAndHandleErrors(
-        () async => deals = await ProductRepository().getTodaysDealProducts());
+        () async => deals = await ProductRepository().getTodaysDealProducts(paginate: 10));
     TodayDealList.clear();
     TodayDealList.addAll(deals?.products ?? []);
     isTodayDealInitial = false;
@@ -523,6 +527,16 @@ class HomeProvider extends ChangeNotifier {
 
     notifyListeners();
   }
+   Future<void> fetchBannerFiveImags() async {
+    SliderResponse? bannerFiveResponse;
+    await executeAndHandleErrors(() async =>
+        bannerFiveResponse = await SlidersRepository().getBannerFiveImages());
+    bannerFiveImageList.clear();
+    bannerFiveImageList.addAll(bannerFiveResponse?.sliders ?? []);
+    isBannerFiveInitial = false;
+
+    notifyListeners();
+  }
   Future<void> fetchFeaturedCategories() async {
     CategoryResponse? categoryResponse;
     await executeAndHandleErrors(() async =>
@@ -534,6 +548,7 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+
   Future<void> fetchFeaturedProducts() async {
     if (showFeaturedLoadingContainer) return;
 
@@ -541,7 +556,8 @@ class HomeProvider extends ChangeNotifier {
     productMini.ProductMiniResponse? productResponse;
     await executeAndHandleErrors(() async =>
         productResponse = await ProductRepository().getFeaturedProducts(
-          page: featuredProductPage,
+          // page: featuredProductPage,
+          paginate: 10,
         ));
 
     featuredProductPage++;
@@ -618,6 +634,8 @@ class HomeProvider extends ChangeNotifier {
       bannerOneImageList.clear();
       bannerTwoImageList.clear();
       bannerThreeImageList.clear();
+      bannerFourImageList.clear();
+      bannerFiveImageList.clear();
       featuredCategoryList.clear();
 
       isCarouselInitial = true;
@@ -625,6 +643,7 @@ class HomeProvider extends ChangeNotifier {
       isBannerTwoInitial = true;
       isBannerThreeInitial = true;
       isBannerFourInitial = true;
+      isBannerFiveInitial = true;
       isCategoryInitial = true;
       isFeaturedProductInitial = true;
       isAllProductInitial = true;

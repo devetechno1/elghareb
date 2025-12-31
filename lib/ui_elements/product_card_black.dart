@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 
 import 'package:active_ecommerce_cms_demo_app/locale/custom_localization.dart';
 
+import '../app_config.dart';
+
 class ProductCardBlack extends StatefulWidget {
   final dynamic identifier;
   final int? id;
@@ -20,6 +22,7 @@ class ProductCardBlack extends StatefulWidget {
   final bool has_discount;
   final bool? isWholesale;
   final String? discount;
+  final String? flatdiscount;
 
   const ProductCardBlack({
     Key? key,
@@ -33,6 +36,7 @@ class ProductCardBlack extends StatefulWidget {
     this.has_discount = false,
     this.isWholesale = false,
     this.discount,
+    this.flatdiscount,
   }) : super(key: key);
 
   @override
@@ -133,8 +137,8 @@ class _ProductCardBlackState extends State<ProductCardBlack> {
                           textAlign: TextAlign.left,
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
-                          style: const TextStyle(
-                            color: Color(0xff000000),
+                          style:  TextStyle(
+                            color: MyTheme.secondaryColor,
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
                           ),
@@ -145,85 +149,117 @@ class _ProductCardBlackState extends State<ProductCardBlack> {
                 ),
               ],
             ),
-            Positioned.fill(
-              child: Align(
-                alignment: Alignment.topRight,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    if (widget.has_discount)
-                      Container(
-                        // padding:
-                        //     EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                        height: 20, width: 48,
-                        margin: const EdgeInsets.only(
-                            top: 8, right: 8, bottom: 15), // Adjusted margin
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
-                          borderRadius:
-                              BorderRadius.circular(AppDimensions.radiusNormal),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color(0x14000000),
-                              offset: Offset(-1, 1),
-                              blurRadius: 1,
-                            ),
-                          ],
+            Positioned(
+            top: 0,
+            right: 0, // ✅ تثبيت على اليمين
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                if (widget.has_discount)
+                  Container(
+                    margin: const EdgeInsets.only(top: 8, right: 8),
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Theme.of(context).primaryColor,
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x14000000),
+                          offset: Offset(-1, 1),
+                          blurRadius: 1,
                         ),
-                        child: Center(
-                          child: Text(
-                            widget.discount ?? '',
-                            style: const TextStyle(
-                              fontSize: 10,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              height: 1.8,
-                            ),
-                            textHeightBehavior: const TextHeightBehavior(
-                                applyHeightToFirstAscent: false),
-                            softWrap: false,
-                          ),
-                        ),
-                      ),
-                    if (whole_sale_addon_installed.$ &&
-                        (widget.isWholesale ?? false))
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 4),
-                        decoration: const BoxDecoration(
-                          color: Colors.blueGrey,
-                          borderRadius: BorderRadius.only(
-                            topRight:
-                                Radius.circular(AppDimensions.radiusHalfSmall),
-                            bottomLeft:
-                                Radius.circular(AppDimensions.radiusHalfSmall),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0x14000000),
-                              offset: Offset(-1, 1),
-                              blurRadius: 1,
-                            ),
-                          ],
-                        ),
-                        child: Text(
-                          'wholesale'.tr(context: context),
+                      ],
+                    ),
+                    alignment: Alignment.center,
+                    child: FittedBox(
+                      
+                    child: Column(
+                      children: [
+                        Text(
+                          'off'.tr(context: context),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                            fontSize: 10,
+                            fontSize: 9,
                             color: Colors.white,
                             fontWeight: FontWeight.w700,
-                            height: 1.8,
+                            height: 1.1,
                           ),
-                          textHeightBehavior: const TextHeightBehavior(
-                              applyHeightToFirstAscent: false),
-                          softWrap: false,
+                          
                         ),
-                      ),
-                  ],
-                ),
+                        if (AppConfig.businessSettingsData.diplayDiscountType == 'flat' && widget.flatdiscount != null) 
+                        Column(
+                          children: [
+                            Text(
+                              "${widget.flatdiscount}",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 9,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                                            height: 1.1,
+                                          ),
+                                          
+                                        ),
+                                        Text(
+                              "${SystemConfig.systemCurrency!.symbol}",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 9,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                                            height: 1.1,
+                                          ),
+                                          
+                                        ),
+                          ],
+                        ),
+            if (AppConfig.businessSettingsData.diplayDiscountType == 'percentage'|| widget.flatdiscount == null)
+            Text(
+              "${widget.discount}",
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 9,
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                height: 1.1,
               ),
             ),
+          ],
+        ),
+                    ),
+        ),
+
+      if (whole_sale_addon_installed.$ && (widget.isWholesale ?? false))
+        Container(
+          margin: const EdgeInsets.only(top: 6, right: 8),
+          padding:
+              const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: const BoxDecoration(
+            color: Colors.blueGrey,
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(AppDimensions.radiusHalfSmall),
+              bottomLeft: Radius.circular(AppDimensions.radiusHalfSmall),
+            ),
+          ),
+          child: Text(
+            'wholesale'.tr(context: context),
+            style: const TextStyle(
+              fontSize: 10,
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+    ],
+  ),
+),
+
           ],
         ),
       ),

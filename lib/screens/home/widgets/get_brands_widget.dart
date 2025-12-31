@@ -1,3 +1,4 @@
+import 'package:active_ecommerce_cms_demo_app/app_config.dart';
 import 'package:active_ecommerce_cms_demo_app/constants/app_dimensions.dart';
 import 'package:active_ecommerce_cms_demo_app/screens/brand_products.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class CustomBrandListWidget extends StatefulWidget {
 }
 
 class _CustomBrandListWidgetState extends State<CustomBrandListWidget> {
+  
   @override
   Widget build(BuildContext context) {
     if (widget.brands.isEmpty) {
@@ -47,8 +49,8 @@ class _CustomBrandListWidgetState extends State<CustomBrandListWidget> {
           itemCount: showViewAll ? 8 : widget.brands.length,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: cross,
-            mainAxisSpacing: 10,
-            crossAxisSpacing: 10,
+            mainAxisSpacing:   10,
+            crossAxisSpacing: 15,
             childAspectRatio: 0.9,
           ),
           itemBuilder: (context, index) {
@@ -121,17 +123,16 @@ class _CustomBrandListWidgetState extends State<CustomBrandListWidget> {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  SizedBox(
-                    child: Text(
-                      brand.name ?? '',
-                      style: const TextStyle(
-                        fontSize: 12,
-                      ),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
+                if (AppConfig.businessSettingsData.showBrandName == true)
+                              SizedBox(
+                                child: Text(
+                                  brand.name ?? '',
+                                  style: const TextStyle(fontSize: 12),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                             ),
                 ],
               ),
             );

@@ -5,6 +5,7 @@ import 'package:active_ecommerce_cms_demo_app/my_theme.dart';
 import 'package:flutter/material.dart';
 
 import 'package:active_ecommerce_cms_demo_app/locale/custom_localization.dart';
+import '../app_config.dart';
 import '../helpers/shared_value_helper.dart';
 import '../screens/auction/auction_products_details.dart';
 import '../screens/product/product_details.dart';
@@ -23,6 +24,7 @@ class ProductCard extends StatefulWidget {
   final String? discount;
   final String? searchedText;
   final void Function()? onPopFromProduct;
+  final String? flatdiscount;
 
   const ProductCard({
     Key? key,
@@ -38,6 +40,7 @@ class ProductCard extends StatefulWidget {
     this.discount,
     this.onPopFromProduct,
     this.searchedText,
+    this.flatdiscount,
   }) : super(key: key);
 
   @override
@@ -179,7 +182,7 @@ class _ProductCardState extends State<ProductCard> {
                           maxLines: 1,
                           style: TextStyle(
                             color: Theme.of(context).primaryColor,
-                            fontSize: 13,
+                            fontSize: 11,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -189,6 +192,7 @@ class _ProductCardState extends State<ProductCard> {
                 ),
               ],
             ),
+            if(widget.has_discount)
             Positioned.fill(
               child: Align(
                 alignment: Alignment.topRight,
@@ -198,43 +202,95 @@ class _ProductCardState extends State<ProductCard> {
                   children: [
                     if (widget.has_discount)
                       Container(
-                        height: 20,
-                        width: 48,
-                        margin: const EdgeInsets.only(
-                            top: AppDimensions.paddingSmall,
-                            right: AppDimensions.paddingSmall,
-                            bottom: 15),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
-                          borderRadius:
-                              BorderRadius.circular(AppDimensions.radiusNormal),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color(0x14000000),
-                              offset: Offset(-1, 1),
-                              blurRadius: 1,
-                            ),
+                        height: 44,
+                        width: 44,
+            margin: const EdgeInsets.only(
+              top: AppDimensions.paddingSmall,
+              right: AppDimensions.paddingSmall,
+              bottom: 15,
+            ),
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor,
+              shape: BoxShape.circle,
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x14000000),
+                  offset: Offset(-1, 1),
+                  blurRadius: 1,
+                ),
+              ],
+            ),
+            alignment: Alignment.center,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 6),
+       
+                    child: Column(
+                      children: [
+                        Text(
+                          'off'.tr(context: context),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 9,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                            height: 1.1,
+                          ),
+                          
+                        ),
+                        if (AppConfig.businessSettingsData.diplayDiscountType == 'flat' && widget.flatdiscount != null)
+                        Column(
+                          children: [
+                            Text(
+                              "${widget.flatdiscount}",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 9,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                                            height: 1.1,
+                                          ),
+                                          
+                                        ),
+                                        Text(
+                              "${SystemConfig.systemCurrency!.symbol}",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 9,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                                            height: 1.1,
+                                          ),
+                                          
+                                        ),
                           ],
                         ),
-                        child: Center(
-                          child: Text(
-                            widget.discount ?? '',
-                            style: const TextStyle(
-                              fontSize: 10,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              height: 1.8,
-                            ),
-                            textHeightBehavior: const TextHeightBehavior(
-                                applyHeightToFirstAscent: false),
-                            softWrap: false,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
+            if (AppConfig.businessSettingsData.diplayDiscountType == 'percentage' || widget.flatdiscount == null)
+            Text(
+              "${widget.discount}",
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 9,
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                height: 1.1,
               ),
             ),
+          ],
+        ),
+              ),
+            ),
+          ),
+      ],
+    ),
+  ),
+),
+
           ],
         ),
       ),
